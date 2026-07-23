@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Embudo de Innovación · MPM</title>
+<style>
+  * { box-sizing: border-box; margin:0; padding:0; }
+  body{ background:#f4f4f6; font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif; padding:32px 12px; }
+  .card{ max-width:900px; margin:0 auto; background:#fff; border-radius:16px; padding:32px 20px 28px; box-shadow:0 4px 24px rgba(0,0,0,0.06); }
+
+  .fa-header{text-align:center;margin-bottom:18px;}
+  .fa-title{font-size:20px;font-weight:800;color:#1f1f1f;letter-spacing:.2px;}
+  .fa-sub{font-size:12.5px;color:#9a9a9a;margin-top:3px;}
+
+  .fa-scroll{overflow-x:auto;padding:8px 4px 4px;}
+  .fa-labels{display:flex;justify-content:center;min-width:720px;margin-bottom:8px;}
+  .fa-lbl-col{display:flex;flex-direction:column;align-items:center;flex-shrink:0;}
+  .fa-lbl-text{font-size:13px;font-weight:800;}
+
+  .fa-funnel{display:flex;align-items:center;justify-content:center;min-width:720px;}
+  .fa-seg{position:relative;flex-shrink:0;}
+  .fa-seg-shape{position:absolute;inset:0;clip-path:polygon(0 0,100% 7%,100% 93%,0 100%);}
+  .fa-seg-content{position:relative;height:100%;display:flex;flex-direction:column;align-items:stretch;justify-content:center;gap:6px;}
+
+  .chip{background:rgba(255,255,255,0.16);border:1px solid rgba(255,255,255,0.28);border-radius:7px;padding:6px 8px;cursor:pointer;transition:transform .12s ease,background .12s ease;outline:none;}
+  .chip:hover{background:rgba(255,255,255,0.32);transform:translateX(2px);}
+  .chip:focus-visible{box-shadow:0 0 0 2px #fff;}
+  .chip.active{background:#fff;}
+  .chip.active .chip-name{color:#1a1a1a;}
+  .chip.active .chip-unit{color:#555;}
+  .chip-name{font-size:11px;font-weight:800;color:#fff;line-height:1.25;}
+  .chip-unit{font-size:9.5px;color:rgba(255,255,255,0.8);margin-top:1px;}
+
+  .fa-counts{display:flex;justify-content:center;min-width:720px;margin-top:8px;}
+  .fa-count-col{text-align:center;font-size:11px;color:#aaa;font-weight:600;flex-shrink:0;}
+
+  .fa-detail{margin-top:20px;border-radius:12px;background:#fafafa;border:1px solid #ececec;padding:16px 18px;min-height:64px;transition:all .2s ease;}
+  .fa-placeholder{font-size:13px;color:#999;text-align:center;padding:10px 0;}
+  .fd-head{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;margin-bottom:10px;}
+  .fd-name{font-size:16px;font-weight:800;color:#1a1a1a;}
+  .fd-tags{display:flex;gap:6px;margin-top:5px;flex-wrap:wrap;}
+  .fd-tag{font-size:10.5px;font-weight:700;padding:2px 8px;border-radius:20px;color:#fff;}
+  .fd-close{border:none;background:#eee;color:#666;width:26px;height:26px;border-radius:50%;font-size:14px;cursor:pointer;flex-shrink:0;}
+  .fd-close:hover{background:#e0e0e0;}
+  .fd-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px 18px;margin-top:12px;}
+  .fd-field{font-size:12px;}
+  .fd-field-label{color:#999;font-weight:700;text-transform:uppercase;font-size:10px;letter-spacing:.4px;margin-bottom:3px;}
+  .fd-field-value{color:#2a2a2a;line-height:1.5;}
+  .fd-impact-row{display:flex;gap:6px;flex-wrap:wrap;margin-top:4px;}
+
+  @media (max-width:480px){ .fd-grid{grid-template-columns:1fr;} }
+</style>
+</head>
+<body>
+<div class="card">
+  <div class="fa-header">
+    <div class="fa-title">Embudo de Innovación · MPM</div>
+    <div class="fa-sub" id="faSub">14 iniciativas · 4 etapas</div>
+  </div>
+
+  <div class="fa-scroll">
+    <div class="fa-labels" id="faLabels"></div>
+    <div class="fa-funnel" id="faFunnel"></div>
+    <div class="fa-counts" id="faCounts"></div>
+  </div>
+
+  <div class="fa-detail" id="faDetail">
+    <div class="fa-placeholder">👆 Toca cualquier proyecto del embudo para ver su estado y detalle</div>
+  </div>
+</div>
+
+<script>
+(function(){
+
+var stages = [
+  {name:'Ideación',      main:'#dd5c1d', dark:'#a8430f', light:'#f2895c', height:460, width:190},
+  {name:'Incubación',    main:'#6631D7', dark:'#3a1690', light:'#9b7ae8', height:380, width:190},
+  {name:'Piloto',        main:'#dd5c1d', dark:'#a8430f', light:'#f2895c', height:320, width:190},
+  {name:'Implementación',main:'#6631D7', dark:'#3a1690', light:'#9b7ae8', height:270, width:170}
+];
+
+var impactMeta = {
+  HH:{label:'HH', color:'#2563eb'},
+  AHORRO:{label:'-$$', color:'#ca8a04'},
+  PF:{label:'PF', color:'#16a34a'},
+  SEGURIDAD:{label:'Seguridad', color:'#dc2626'},
+  OTRO:{label:'Estratégico', color:'#7c3aed'}
+};
+
+var unitMeta = {
+  'Construcción y Montaje':'🏗️','C&M':'🏗️',
+  'Rental':'🚛',
+  'Movimiento de tierra':'⛏️',
+  'Finanzas':'💰',
+  'RRHH':'👥',
+  'HSE':'🦺',
+  'Seguridad':'🛡️',
+  'Calidad':'✅',
+  'Estudios':'📊'
+};
+
+var projects = [
+  {id:1, name:'Simulak Mobil', stage:0, unit:'Movimiento de tierra', leader:'José Luis Deney',
+   estado:'Levantamiento de solicitud', siguiente:'Crear contenedor móvil en La Negra',
+   impactText:'HH', badges:['HH']},
+
+  {id:2, name:'Rendiciones', stage:0, unit:'Finanzas', leader:'Mario Bocchi',
+   estado:'Levantamiento de soluciones', siguiente:'Business case',
+   impactText:'HH y -$$', badges:['HH','AHORRO']},
+
+  {id:3, name:'Plan de Tránsito', stage:1, unit:'Movimiento de tierra', leader:'Felipe Bertrand',
+   estado:'Testeo modelo Beta', siguiente:'Piloto con cliente',
+   impactText:'HH y Seguridad', badges:['HH','SEGURIDAD']},
+
+  {id:4, name:'Registro Almuerzos', stage:1, unit:'RRHH', leader:'Felipe Bertrand',
+   estado:'Testeo en Café Olmos', siguiente:'Piloto en La Negra y K12',
+   impactText:'HH y -$$', badges:['HH','AHORRO']},
+
+  {id:5, name:'TLS-3D', stage:1, unit:'Calidad', leader:'Héctor Carreño',
+   estado:'Informe interferencias Proyecto Mejoras Planta Molibdeno', siguiente:'Analizar mejoras de servicios y pilotear',
+   impactText:'HH / -$$ / PF', badges:['HH','AHORRO','PF']},
+
+  {id:6, name:'Camión 28m³', stage:2, unit:'Rental', leader:'Gonzalo Middleton',
+   estado:'Utilización de camiones en proyecto W&T', siguiente:'Evaluar impacto',
+   impactText:'-$$', badges:['AHORRO']},
+
+  {id:7, name:'MPM Green', stage:2, unit:'Rental', leader:'Gonzalo Middleton',
+   estado:'Mejora estación de carga eléctrica', siguiente:'Testear módulo de carga junto con Yuzz',
+   impactText:'Nueva línea de negocio emergente', badges:['OTRO']},
+
+  {id:8, name:'Scanner', stage:2, unit:'Movimiento de tierra', leader:'Rodrigo Araya',
+   estado:'Semana de setup scanner', siguiente:'Comenzar a evaluar operadores con Scanner.',
+   impactText:'HH / -$$', badges:['HH','AHORRO']},
+
+  {id:9, name:'GTM', stage:2, unit:'Rental', leader:'Félix Vinagre',
+   estado:'Utilización al 100%', siguiente:'Modificaciones de parte de GTM',
+   impactText:'HH', badges:['HH']},
+
+  {id:10, name:'Nupav', stage:2, unit:'RRHH', leader:'Gloria Bravo',
+   estado:'Setup plataforma proceso interno', siguiente:'Desarrollo de proceso de acreditaciones',
+   impactText:'HH', badges:['HH']},
+
+  {id:11, name:'Reloj Biométrico', stage:3, unit:'HSE', leader:'Juan Bolados',
+   estado:'Relojes totales: 70 en MEL + 326 en Spence.<br>En uso: 310 (240 Spence + 70 MEL) · Baja: 86 (Spence).<br>Distribución: Water Spence 270 · Marco Spence 36 · Ripio Spence 20 · B4 MEL 40 · Rpox MEL 30.',
+   siguiente:'Recibir reporte semanal',
+   impactText:'Seguridad', badges:['SEGURIDAD']},
+
+  {id:12, name:'Torre de Control', stage:3, unit:'Rental', leader:'Hugo Sepúlveda',
+   estado:'Operativo 24/7', siguiente:'Optimizar data extraída',
+   impactText:'-$$ / PF', badges:['AHORRO','PF']},
+
+  {id:13, name:'Zyght', stage:3, unit:'HSE', leader:'Alexis Martel',
+   estado:'Operativo todos los módulos', siguiente:'Lograr reportería',
+   impactText:'HH / Seguridad', badges:['HH','SEGURIDAD']},
+
+  {id:14, name:'DataScope', stage:3, unit:'Calidad', leader:'Héctor Carreño',
+   estado:'Utilizado en todas las inspecciones técnicas', siguiente:'Implementar reportería',
+   impactText:'HH', badges:['HH']}
+];
+
+var labelsEl = document.getElementById('faLabels');
+var funnelEl = document.getElementById('faFunnel');
+var countsEl = document.getElementById('faCounts');
+var subEl = document.getElementById('faSub');
+
+subEl.textContent = projects.length + ' iniciativas · ' + stages.length + ' etapas';
+
+stages.forEach(function(st, i){
+  var count = projects.filter(function(p){return p.stage===i;}).length;
+
+  var lblCol = document.createElement('div');
+  lblCol.className='fa-lbl-col';
+  lblCol.style.width = st.width+'px';
+  lblCol.innerHTML = '<div class="fa-lbl-text" style="color:'+st.main+'">'+st.name+'</div>';
+  labelsEl.appendChild(lblCol);
+
+  var seg = document.createElement('div');
+  seg.className='fa-seg';
+  seg.style.width = st.width+'px';
+  seg.style.height = st.height+'px';
+
+  var shape = document.createElement('div');
+  shape.className='fa-seg-shape';
+  shape.style.background = 'linear-gradient(135deg,'+st.light+' 0%,'+st.main+' 45%,'+st.dark+' 100%)';
+  shape.style.boxShadow = 'inset 14px 0 16px -10px rgba(0,0,0,0.4), inset 0 18px 26px -18px rgba(255,255,255,0.35)';
+  seg.appendChild(shape);
+
+  var content = document.createElement('div');
+  content.className='fa-seg-content';
+  var padV = Math.round(st.height*0.09);
+  content.style.padding = padV+'px 16px '+padV+'px 26px';
+
+  projects.filter(function(p){return p.stage===i;}).forEach(function(p){
+    var chip = document.createElement('div');
+    chip.className='chip';
+    chip.id='chip-'+p.id;
+    chip.tabIndex=0;
+    chip.innerHTML = '<div class="chip-name">'+p.name+'</div><div class="chip-unit">'+(unitMeta[p.unit]||'•')+' '+p.unit+'</div>';
+    chip.addEventListener('click', function(){ showDetail(p.id); });
+    chip.addEventListener('keydown', function(e){ if(e.key==='Enter'||e.key===' '){ e.preventDefault(); showDetail(p.id); } });
+    content.appendChild(chip);
+  });
+
+  seg.appendChild(content);
+  funnelEl.appendChild(seg);
+
+  var cnt = document.createElement('div');
+  cnt.className='fa-count-col';
+  cnt.style.width = st.width+'px';
+  cnt.textContent = count + (count===1?' iniciativa':' iniciativas');
+  countsEl.appendChild(cnt);
+});
+
+window.showDetail = function(id){
+  var p = projects.find(function(x){return x.id===id;});
+  if(!p) return;
+  var st = stages[p.stage];
+
+  document.querySelectorAll('.chip').forEach(function(c){ c.classList.remove('active'); });
+  var chipEl = document.getElementById('chip-'+id);
+  if(chipEl) chipEl.classList.add('active');
+
+  var badgesHtml = p.badges.map(function(code){
+    var m = impactMeta[code];
+    return '<span class="fd-tag" style="background:'+m.color+'">'+m.label+'</span>';
+  }).join('');
+
+  var detail = document.getElementById('faDetail');
+  detail.innerHTML =
+    '<div class="fd-head">'+
+      '<div>'+
+        '<div class="fd-name">'+p.name+'</div>'+
+        '<div class="fd-tags">'+
+          '<span class="fd-tag" style="background:'+st.main+'">'+st.name+'</span>'+
+          '<span class="fd-tag" style="background:#888">'+(unitMeta[p.unit]||'')+' '+p.unit+'</span>'+
+        '</div>'+
+      '</div>'+
+      '<button class="fd-close" onclick="closeDetail()">✕</button>'+
+    '</div>'+
+    '<div class="fd-grid">'+
+      '<div class="fd-field"><div class="fd-field-label">Líder</div><div class="fd-field-value">'+p.leader+'</div></div>'+
+      '<div class="fd-field"><div class="fd-field-label">Impacto potencial</div><div class="fd-impact-row">'+badgesHtml+'</div></div>'+
+      '<div class="fd-field" style="grid-column:1/-1"><div class="fd-field-label">Estado actual</div><div class="fd-field-value">'+p.estado+'</div></div>'+
+      '<div class="fd-field" style="grid-column:1/-1"><div class="fd-field-label">Próximo paso</div><div class="fd-field-value">'+p.siguiente+'</div></div>'+
+    '</div>';
+};
+
+window.closeDetail = function(){
+  document.querySelectorAll('.chip').forEach(function(c){ c.classList.remove('active'); });
+  document.getElementById('faDetail').innerHTML = '<div class="fa-placeholder">👆 Toca cualquier proyecto del embudo para ver su estado y detalle</div>';
+};
+
+})();
+</script>
+</body>
+</html>
