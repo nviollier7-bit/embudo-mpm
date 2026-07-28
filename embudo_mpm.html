@@ -23,7 +23,7 @@
   .fa-seg-shape{position:absolute;inset:0;clip-path:polygon(0 0,100% 7%,100% 93%,0 100%);}
   .fa-seg-content{position:relative;height:100%;display:flex;flex-direction:column;align-items:stretch;justify-content:center;gap:6px;}
 
-  .chip{background:rgba(255,255,255,0.16);border:1px solid rgba(255,255,255,0.28);border-radius:7px;padding:6px 8px;cursor:pointer;transition:transform .12s ease,background .12s ease;outline:none;}
+  .chip{position:relative;background:rgba(255,255,255,0.16);border:1px solid rgba(255,255,255,0.28);border-radius:7px;padding:6px 8px;cursor:pointer;transition:transform .12s ease,background .12s ease;outline:none;}
   .chip:hover{background:rgba(255,255,255,0.32);transform:translateX(2px);}
   .chip:focus-visible{box-shadow:0 0 0 2px #fff;}
   .chip.active{background:#fff;}
@@ -31,6 +31,16 @@
   .chip.active .chip-unit{color:#555;}
   .chip-name{font-size:11px;font-weight:800;color:#fff;line-height:1.25;}
   .chip-unit{font-size:9.5px;color:rgba(255,255,255,0.8);margin-top:1px;}
+  .chip.chip-new{border:2px solid #fff;box-shadow:0 0 0 1px rgba(255,255,255,0.35);}
+  .chip-dot{position:absolute;top:5px;right:5px;width:8px;height:8px;border-radius:50%;background:#fff;box-shadow:0 0 0 2px rgba(0,0,0,0.18);}
+
+  .fa-archived-row{display:flex;justify-content:center;min-width:720px;margin-top:8px;}
+  .fa-archived-col{display:flex;flex-direction:column;align-items:center;gap:6px;flex-shrink:0;}
+  .chip-archived{position:relative;background:#fafafa;border:1.5px solid #c7c7c7;border-radius:7px;padding:5px 10px;cursor:pointer;transition:background .12s ease;outline:none;}
+  .chip-archived:hover{background:#efefef;}
+  .chip-archived:focus-visible{box-shadow:0 0 0 2px #999;}
+  .chip-archived .chip-name{color:#8a8a8a;font-size:10.5px;}
+  .chip-archived.active{background:#e6e6e6;border-color:#999;}
 
   .fa-counts{display:flex;justify-content:center;min-width:720px;margin-top:8px;}
   .fa-count-col{text-align:center;font-size:11px;color:#aaa;font-weight:600;flex-shrink:0;}
@@ -47,6 +57,7 @@
   .fd-field{font-size:12px;}
   .fd-field-label{color:#999;font-weight:700;text-transform:uppercase;font-size:10px;letter-spacing:.4px;margin-bottom:3px;}
   .fd-field-value{color:#2a2a2a;line-height:1.5;}
+  .fd-field-value.fd-comment{color:#b0b0b0;}
   .fd-impact-row{display:flex;gap:6px;flex-wrap:wrap;margin-top:4px;}
 
   @media (max-width:480px){ .fd-grid{grid-template-columns:1fr;} }
@@ -62,6 +73,7 @@
   <div class="fa-scroll">
     <div class="fa-labels" id="faLabels"></div>
     <div class="fa-funnel" id="faFunnel"></div>
+    <div class="fa-archived-row" id="faArchivedRow"></div>
     <div class="fa-counts" id="faCounts"></div>
   </div>
 
@@ -111,9 +123,10 @@ var projects = [
 
   {id:3, name:'Plan de Tránsito', stage:1, unit:'Movimiento de tierra', leader:'Felipe Bertrand',
    estado:'Testeo modelo Beta', siguiente:'Desarrollo del piloto',
-   impactText:'HH y Seguridad', badges:['HH','SEGURIDAD']},
+   impactText:'Seguridad', badges:['SEGURIDAD'],
+   comments:'Incorporar a una persona de HSE que esté a cargo de este tema.'},
 
-  {id:4, name:'Registro Almuerzos', stage:1, unit:'Finanzas', leader:'Andrés Silva',
+  {id:4, name:'Registro Almuerzos', stage:3, unit:'Finanzas', leader:'Andrés Silva',
    estado:'Testeo en Café Olmos', siguiente:'Instalación en La Negra y K12',
    impactText:'HH y -$$', badges:['HH','AHORRO']},
 
@@ -123,11 +136,13 @@ var projects = [
 
   {id:6, name:'Camión 28m³', stage:2, unit:'Movimiento de tierra', leader:'José Luis Deney',
    estado:'Piloto positivo, término del préstamo de 2 meses del camión Scania por Salfa', siguiente:'Evaluación de la compra',
-   impactText:'-$$', badges:['AHORRO']},
+   impactText:'-$$', badges:['AHORRO'], archived:true,
+   comments:'El costo de los camiones estaba por sobre el beneficio: el piloto fue exitoso, pero no cubría la inversión.'},
 
   {id:7, name:'MPM Green', stage:2, unit:'Rental', leader:'Gonzalo Middleton',
    estado:'Lista la reparación de la estación de carga móvil', siguiente:'Habilitar un piloto en algún proyecto',
-   impactText:'Nueva línea de negocio emergente', badges:['OTRO']},
+   impactText:'Nueva línea de negocio emergente', badges:['OTRO'],
+   comments:'Pilotear la estación de carga con la grúa de Repox.'},
 
   {id:8, name:'Scanner', stage:2, unit:'Movimiento de tierra', leader:'Rodrigo Araya',
    estado:'Término de instalación del scanner', siguiente:'Comienzo de pruebas y ajustes durante 2 semanas',
@@ -135,7 +150,8 @@ var projects = [
 
   {id:9, name:'GTM', stage:2, unit:'Rental', leader:'Félix Vinagre',
    estado:'Documentación subida en un 10%.<br>Módulo de mantención en configuración.<br>Comienzo de actividades mecánicas en el B4.', siguiente:'Incorporación de un colaborador en La Negra para acelerar el ingreso de documentos, mantenciones y actividades mecánicas en la plataforma',
-   impactText:'HH', badges:['HH']},
+   impactText:'HH', badges:['HH'],
+   comments:'Traspasar fuera de Rental para solicitar mantenciones.'},
 
   {id:10, name:'Nupav', stage:2, unit:'RRHH', leader:'Gloria Bravo',
    estado:'Setup plataforma con nuestro proceso interno', siguiente:'Comenzar proceso de acreditaciones en la plataforma',
@@ -148,26 +164,32 @@ var projects = [
 
   {id:12, name:'Torre de Control', stage:3, unit:'Rental', leader:'Hugo Sepúlveda',
    estado:'Operativo 24/7', siguiente:'Optimizar el proceso y potenciar el valor de la información extraída',
-   impactText:'-$$ / PF', badges:['AHORRO','PF']},
+   impactText:'-$$ / PF', badges:['AHORRO','PF'],
+   comments:'Medición de productividad HH de las personas; incorporar el reloj.'},
 
   {id:13, name:'Zyght', stage:3, unit:'HSE', leader:'Alexis Martel',
    estado:'Operativo todos los módulos', siguiente:'Lograr reportería',
    impactText:'HH / Seguridad', badges:['HH','SEGURIDAD']},
 
-  {id:14, name:'DataScope', stage:3, unit:'Calidad', leader:'Héctor Carreño',
+  {id:14, name:'DataScope', stage:2, unit:'Calidad', leader:'Héctor Carreño',
    estado:'Implementación en proyecto Repox', siguiente:'Implementación en B. Ripio y Lomas Bayas',
-   impactText:'HH', badges:['HH']}
+   impactText:'HH', badges:['HH']},
+
+  {id:15, name:'Opusmesh', stage:0, unit:'C&M', leader:'Nicolás Viollier',
+   estado:'Levantamiento de información en terreno', siguiente:'Armar caso de negocio',
+   impactText:'PF y Seguridad', badges:['PF','SEGURIDAD'], isNew:true}
 ];
 
 var labelsEl = document.getElementById('faLabels');
 var funnelEl = document.getElementById('faFunnel');
+var archivedRowEl = document.getElementById('faArchivedRow');
 var countsEl = document.getElementById('faCounts');
 var subEl = document.getElementById('faSub');
 
 subEl.textContent = projects.length + ' iniciativas · ' + stages.length + ' etapas';
 
 stages.forEach(function(st, i){
-  var count = projects.filter(function(p){return p.stage===i;}).length;
+  var count = projects.filter(function(p){return p.stage===i && !p.archived;}).length;
 
   var lblCol = document.createElement('div');
   lblCol.className='fa-lbl-col';
@@ -191,12 +213,12 @@ stages.forEach(function(st, i){
   var padV = Math.round(st.height*0.09);
   content.style.padding = padV+'px 16px '+padV+'px 26px';
 
-  projects.filter(function(p){return p.stage===i;}).forEach(function(p){
+  projects.filter(function(p){return p.stage===i && !p.archived;}).forEach(function(p){
     var chip = document.createElement('div');
-    chip.className='chip';
+    chip.className='chip'+(p.isNew?' chip-new':'');
     chip.id='chip-'+p.id;
     chip.tabIndex=0;
-    chip.innerHTML = '<div class="chip-name">'+p.name+'</div><div class="chip-unit">'+(unitMeta[p.unit]||'•')+' '+p.unit+'</div>';
+    chip.innerHTML = '<div class="chip-name">'+p.name+'</div><div class="chip-unit">'+(unitMeta[p.unit]||'•')+' '+p.unit+'</div>'+(p.comments?'<div class="chip-dot"></div>':'');
     chip.addEventListener('click', function(){ showDetail(p.id); });
     chip.addEventListener('keydown', function(e){ if(e.key==='Enter'||e.key===' '){ e.preventDefault(); showDetail(p.id); } });
     content.appendChild(chip);
@@ -204,6 +226,21 @@ stages.forEach(function(st, i){
 
   seg.appendChild(content);
   funnelEl.appendChild(seg);
+
+  var archCol = document.createElement('div');
+  archCol.className='fa-archived-col';
+  archCol.style.width = st.width+'px';
+  projects.filter(function(p){return p.archived && p.stage===i;}).forEach(function(p){
+    var achip = document.createElement('div');
+    achip.className='chip-archived';
+    achip.id='chip-'+p.id;
+    achip.tabIndex=0;
+    achip.innerHTML = '<div class="chip-name">'+p.name+'</div>';
+    achip.addEventListener('click', function(){ showDetail(p.id); });
+    achip.addEventListener('keydown', function(e){ if(e.key==='Enter'||e.key===' '){ e.preventDefault(); showDetail(p.id); } });
+    archCol.appendChild(achip);
+  });
+  archivedRowEl.appendChild(archCol);
 
   var cnt = document.createElement('div');
   cnt.className='fa-count-col';
@@ -217,7 +254,7 @@ window.showDetail = function(id){
   if(!p) return;
   var st = stages[p.stage];
 
-  document.querySelectorAll('.chip').forEach(function(c){ c.classList.remove('active'); });
+  document.querySelectorAll('.chip, .chip-archived').forEach(function(c){ c.classList.remove('active'); });
   var chipEl = document.getElementById('chip-'+id);
   if(chipEl) chipEl.classList.add('active');
 
@@ -225,6 +262,10 @@ window.showDetail = function(id){
     var m = impactMeta[code];
     return '<span class="fd-tag" style="background:'+m.color+'">'+m.label+'</span>';
   }).join('');
+
+  var commentsHtml = p.comments
+    ? '<div class="fd-field" style="grid-column:1/-1"><div class="fd-field-label">Comentarios</div><div class="fd-field-value fd-comment">'+p.comments+'</div></div>'
+    : '';
 
   var detail = document.getElementById('faDetail');
   detail.innerHTML =
@@ -234,6 +275,7 @@ window.showDetail = function(id){
         '<div class="fd-tags">'+
           '<span class="fd-tag" style="background:'+st.main+'">'+st.name+'</span>'+
           '<span class="fd-tag" style="background:#888">'+(unitMeta[p.unit]||'')+' '+p.unit+'</span>'+
+          (p.archived?'<span class="fd-tag" style="background:#999">Archivado</span>':'')+
         '</div>'+
       '</div>'+
       '<button class="fd-close" onclick="closeDetail()">✕</button>'+
@@ -243,11 +285,12 @@ window.showDetail = function(id){
       '<div class="fd-field"><div class="fd-field-label">Impacto potencial</div><div class="fd-impact-row">'+badgesHtml+'</div></div>'+
       '<div class="fd-field" style="grid-column:1/-1"><div class="fd-field-label">Estado actual</div><div class="fd-field-value">'+p.estado+'</div></div>'+
       '<div class="fd-field" style="grid-column:1/-1"><div class="fd-field-label">Próximo paso</div><div class="fd-field-value">'+p.siguiente+'</div></div>'+
+      commentsHtml+
     '</div>';
 };
 
 window.closeDetail = function(){
-  document.querySelectorAll('.chip').forEach(function(c){ c.classList.remove('active'); });
+  document.querySelectorAll('.chip, .chip-archived').forEach(function(c){ c.classList.remove('active'); });
   document.getElementById('faDetail').innerHTML = '<div class="fa-placeholder">👆 Toca cualquier proyecto del embudo para ver su estado y detalle</div>';
 };
 
