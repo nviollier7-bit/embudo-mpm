@@ -177,7 +177,15 @@ var projects = [
 
   {id:15, name:'Opusmesh', stage:0, unit:'C&M', leader:'Nicolás Viollier',
    estado:'Levantamiento de información en terreno', siguiente:'Armar caso de negocio',
-   impactText:'PF y Seguridad', badges:['PF','SEGURIDAD'], isNew:true}
+   impactText:'PF y Seguridad', badges:['PF','SEGURIDAD'], isNew:true},
+
+  {id:16, name:'Control Herramientas', stage:0, unit:'C&M', leader:'Eric Segovia',
+   estado:'Levantamiento de problemática', siguiente:'Idear solución',
+   impactText:'HH y -$$', badges:['HH','AHORRO'], isNew:true},
+
+  {id:17, name:'Agente IA', stage:0, unit:'C&M', leader:'Nicolás Viollier',
+   estado:'Desarrollando prototipos de agentes', siguiente:'Probar con algunos administradores de proyectos',
+   impactText:'HH', badges:['HH'], isNew:true}
 ];
 
 var labelsEl = document.getElementById('faLabels');
@@ -186,7 +194,8 @@ var archivedRowEl = document.getElementById('faArchivedRow');
 var countsEl = document.getElementById('faCounts');
 var subEl = document.getElementById('faSub');
 
-subEl.textContent = projects.length + ' iniciativas · ' + stages.length + ' etapas';
+var activeCount = projects.filter(function(p){return !p.archived;}).length;
+subEl.textContent = activeCount + ' iniciativas · ' + stages.length + ' etapas';
 
 stages.forEach(function(st, i){
   var count = projects.filter(function(p){return p.stage===i && !p.archived;}).length;
