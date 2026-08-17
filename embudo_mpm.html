@@ -33,6 +33,11 @@
   #chip-4 .chip-name{font-size:9.5px;white-space:nowrap;}
   .chip-unit{font-size:9.5px;color:rgba(255,255,255,0.8);margin-top:1px;}
   .chip.chip-new{border:2px solid #fff;box-shadow:0 0 0 1px rgba(255,255,255,0.35);}
+  .chip.chip-flag-red{background:rgba(239,68,68,0.42);border-color:rgba(239,68,68,0.65);}
+  .chip.chip-flag-red:hover{background:rgba(239,68,68,0.58);}
+  .chip.chip-flag-red.active{background:#fee2e2;}
+  .chip.chip-flag-red.active .chip-name{color:#7f1d1d;}
+  .chip.chip-flag-red.active .chip-unit{color:#991b1b;}
   .chip-dot{position:absolute;top:5px;right:5px;width:8px;height:8px;border-radius:50%;background:#fff;box-shadow:0 0 0 2px rgba(0,0,0,0.18);}
 
   .fa-archived-row{display:flex;justify-content:center;min-width:720px;margin-top:8px;}
@@ -129,7 +134,7 @@ var projects = [
 
   {id:4, name:'Registro Almuerzos', stage:3, unit:'Finanzas', leader:'Andrés Silva',
    estado:'Testeo en Café Olmos', siguiente:'Instalación en La Negra y K12',
-   impactText:'HH y -$$', badges:['HH','AHORRO']},
+   impactText:'HH y -$$', badges:['HH','AHORRO'], flag:'red'},
 
   {id:5, name:'TLS-3D', stage:1, unit:'Calidad', leader:'Héctor Carreño',
    estado:'Levantamiento en planta Molibdeno Spence, detección de interferencias', siguiente:'Levantamiento en Repox',
@@ -141,7 +146,7 @@ var projects = [
    comments:'El costo de los camiones estaba por sobre el beneficio: el piloto fue exitoso, pero no cubría la inversión.'},
 
   {id:7, name:'MPM Green', stage:2, unit:'Rental', leader:'Gonzalo Middleton',
-   estado:'Estación de carga en funcionamiento', siguiente:'Piloto de grúa en proyecto Marco Spence',
+   estado:'Aprobado el envío de grúa a proyecto Marco Spence', siguiente:'Recibir grúa en proyecto Marco Spence',
    impactText:'Nueva línea de negocio emergente', badges:['OTRO']},
 
   {id:8, name:'Scanner', stage:2, unit:'Movimiento de tierra', leader:'Rodrigo Araya',
@@ -163,7 +168,7 @@ var projects = [
 
   {id:12, name:'Torre de Control', stage:3, unit:'Rental', leader:'Hugo Sepúlveda',
    estado:'Evaluación de reportes mediante encuesta enviada', siguiente:'Equipo de HSE integra reportes y el uso de la torre de control',
-   impactText:'-$$ / PF', badges:['AHORRO','PF']},
+   impactText:'-$$ / PF', badges:['AHORRO','PF'], flag:'red'},
 
   {id:13, name:'Zyght', stage:3, unit:'HSE', leader:'Alexis Martel',
    estado:'Operativo todos los módulos', siguiente:'Lograr reportería',
@@ -171,7 +176,7 @@ var projects = [
 
   {id:14, name:'DataScope', stage:2, unit:'Calidad', leader:'Héctor Carreño',
    estado:'Implementación en proyecto Repox', siguiente:'Implementación en B. Ripio y Lomas Bayas',
-   impactText:'HH', badges:['HH']},
+   impactText:'HH', badges:['HH'], flag:'red'},
 
   {id:15, name:'Opusmesh', stage:0, unit:'C&M', leader:'Nicolás Viollier',
    estado:'Armando caso piloto en proyecto Repox', siguiente:'Presentar para su aprobación',
@@ -222,7 +227,7 @@ stages.forEach(function(st, i){
 
   projects.filter(function(p){return p.stage===i && !p.archived;}).forEach(function(p){
     var chip = document.createElement('div');
-    chip.className='chip'+(p.isNew?' chip-new':'');
+    chip.className='chip'+(p.isNew?' chip-new':'')+(p.flag==='red'?' chip-flag-red':'');
     chip.id='chip-'+p.id;
     chip.tabIndex=0;
     chip.innerHTML = '<div class="chip-name">'+p.name+'</div><div class="chip-unit">'+(unitMeta[p.unit]||'•')+' '+p.unit+'</div>'+(p.comments?'<div class="chip-dot"></div>':'');
