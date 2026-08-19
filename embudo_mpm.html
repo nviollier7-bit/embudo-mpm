@@ -38,6 +38,17 @@
   .chip.chip-flag-red.active{background:#fee2e2;}
   .chip.chip-flag-red.active .chip-name{color:#7f1d1d;}
   .chip.chip-flag-red.active .chip-unit{color:#991b1b;}
+
+  .fa-seg-content-dark .chip{background:rgba(0,0,0,0.04);border-color:rgba(0,0,0,0.14);}
+  .fa-seg-content-dark .chip:hover{background:rgba(0,0,0,0.08);}
+  .fa-seg-content-dark .chip .chip-name{color:#444;}
+  .fa-seg-content-dark .chip .chip-unit{color:#767676;}
+  .fa-seg-content-dark .chip.active{background:#fff;border-color:#ccc;}
+
+  .chip.chip-compact{display:flex;align-items:center;justify-content:center;gap:3px;padding:5px 5px;overflow:hidden;}
+  .chip.chip-compact .chip-name{font-size:9.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .chip.chip-compact .chip-unit{font-size:8.5px;margin-top:0;white-space:nowrap;flex-shrink:0;}
+  .chip-unit-icon{font-size:11px;flex-shrink:0;line-height:1;}
   .chip-dot{position:absolute;top:5px;right:5px;width:8px;height:8px;border-radius:50%;background:#fff;box-shadow:0 0 0 2px rgba(0,0,0,0.18);}
 
   .fa-archived-row{display:flex;justify-content:center;min-width:720px;margin-top:8px;}
@@ -95,7 +106,8 @@ var stages = [
   {name:'Ideación',      main:'#dd5c1d', dark:'#a8430f', light:'#f2895c', height:460, width:190},
   {name:'Incubación',    main:'#6631D7', dark:'#3a1690', light:'#9b7ae8', height:380, width:190},
   {name:'Piloto',        main:'#dd5c1d', dark:'#a8430f', light:'#f2895c', height:320, width:190},
-  {name:'Implementación',main:'#6631D7', dark:'#3a1690', light:'#9b7ae8', height:270, width:170}
+  {name:'Implementación',main:'#6631D7', dark:'#3a1690', light:'#9b7ae8', height:270, width:170},
+  {name:'Control', main:'#EBEBEB', dark:'#c9c9c9', light:'#f7f7f7', height:230, width:145, labelColor:'#999999', textDark:true, compactChip:true, iconOnlyUnit:true, padRight:8, padLeft:14}
 ];
 
 var impactMeta = {
@@ -132,10 +144,6 @@ var projects = [
    impactText:'Seguridad', badges:['SEGURIDAD'],
    comments:'Incorporar a una persona de HSE que esté a cargo de este tema.'},
 
-  {id:4, name:'Registro Almuerzos', stage:3, unit:'Finanzas', leader:'Andrés Silva',
-   estado:'Testeo en Café Olmos', siguiente:'Instalación en La Negra y K12',
-   impactText:'HH y -$$', badges:['HH','AHORRO'], flag:'red'},
-
   {id:5, name:'TLS-3D', stage:1, unit:'Calidad', leader:'Héctor Carreño',
    estado:'Levantamiento en planta Molibdeno Spence, detección de interferencias', siguiente:'Levantamiento en Repox',
    impactText:'-$$ / PF', badges:['AHORRO','PF']},
@@ -166,7 +174,7 @@ var projects = [
    siguiente:'Evaluación de modelo de compra ($160, relojes anteriores) o arriendo de relojes ($15, nuevos)',
    impactText:'Seguridad', badges:['SEGURIDAD']},
 
-  {id:12, name:'Torre de Control', stage:3, unit:'Rental', leader:'Hugo Sepúlveda',
+  {id:12, name:'Torre de Control', stage:4, unit:'Rental', leader:'Hugo Sepúlveda',
    estado:'Evaluación de reportes mediante encuesta enviada', siguiente:'Equipo de HSE integra reportes y el uso de la torre de control',
    impactText:'-$$ / PF', badges:['AHORRO','PF'], flag:'red'},
 
@@ -174,9 +182,9 @@ var projects = [
    estado:'Operativo todos los módulos', siguiente:'Lograr reportería',
    impactText:'HH / Seguridad', badges:['HH','SEGURIDAD']},
 
-  {id:14, name:'DataScope', stage:2, unit:'Calidad', leader:'Héctor Carreño',
+  {id:14, name:'DataScope', stage:3, unit:'Calidad', leader:'Héctor Carreño',
    estado:'Implementación en proyecto Repox', siguiente:'Implementación en B. Ripio y Lomas Bayas',
-   impactText:'HH', badges:['HH'], flag:'red'},
+   impactText:'HH', badges:['HH']},
 
   {id:15, name:'Opusmesh', stage:0, unit:'C&M', leader:'Nicolás Viollier',
    estado:'Armando caso piloto en proyecto Repox', siguiente:'Presentar para su aprobación',
@@ -206,7 +214,7 @@ stages.forEach(function(st, i){
   var lblCol = document.createElement('div');
   lblCol.className='fa-lbl-col';
   lblCol.style.width = st.width+'px';
-  lblCol.innerHTML = '<div class="fa-lbl-text" style="color:'+st.main+'">'+st.name+'</div>';
+  lblCol.innerHTML = '<div class="fa-lbl-text" style="color:'+(st.labelColor||st.main)+'">'+st.name+'</div>';
   labelsEl.appendChild(lblCol);
 
   var seg = document.createElement('div');
@@ -221,16 +229,21 @@ stages.forEach(function(st, i){
   seg.appendChild(shape);
 
   var content = document.createElement('div');
-  content.className='fa-seg-content';
+  content.className='fa-seg-content'+(st.textDark?' fa-seg-content-dark':'');
   var padV = Math.round(st.height*0.09);
-  content.style.padding = padV+'px 16px '+padV+'px 26px';
+  var padR = (st.padRight!=null)?st.padRight:16;
+  var padL = (st.padLeft!=null)?st.padLeft:26;
+  content.style.padding = padV+'px '+padR+'px '+padV+'px '+padL+'px';
 
   projects.filter(function(p){return p.stage===i && !p.archived;}).forEach(function(p){
     var chip = document.createElement('div');
-    chip.className='chip'+(p.isNew?' chip-new':'')+(p.flag==='red'?' chip-flag-red':'');
+    chip.className='chip'+(p.isNew?' chip-new':'')+(p.flag==='red'?' chip-flag-red':'')+(st.compactChip?' chip-compact':'');
     chip.id='chip-'+p.id;
     chip.tabIndex=0;
-    chip.innerHTML = '<div class="chip-name">'+p.name+'</div><div class="chip-unit">'+(unitMeta[p.unit]||'•')+' '+p.unit+'</div>'+(p.comments?'<div class="chip-dot"></div>':'');
+    var unitHtml = st.iconOnlyUnit
+      ? '<span class="chip-unit-icon">'+(unitMeta[p.unit]||'•')+'</span>'
+      : '<div class="chip-unit">'+(unitMeta[p.unit]||'•')+' '+p.unit+'</div>';
+    chip.innerHTML = '<div class="chip-name">'+p.name+'</div>'+unitHtml+(p.comments?'<div class="chip-dot"></div>':'');
     chip.addEventListener('click', function(){ showDetail(p.id); });
     chip.addEventListener('keydown', function(e){ if(e.key==='Enter'||e.key===' '){ e.preventDefault(); showDetail(p.id); } });
     content.appendChild(chip);
