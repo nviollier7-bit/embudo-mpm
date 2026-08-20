@@ -132,17 +132,16 @@ var unitMeta = {
 
 var projects = [
   {id:1, name:'Simumak Mobil', stage:1, unit:'Movimiento de tierra', leader:'José Luis Deney',
-   estado:'Negociación con proveedor', siguiente:'Traslado, instalación y puesta en marcha',
+   estado:'Concretado proveedor', siguiente:'Ejecutar el traslado e instalación',
    impactText:'HH', badges:['HH']},
 
   {id:2, name:'Rendiciones', stage:0, unit:'Finanzas', leader:'Mario Bocchi',
-   estado:'Levantamiento de soluciones', siguiente:'Business case',
+   estado:'Recibidas propuestas de las soluciones', siguiente:'Business case y conformar equipo',
    impactText:'HH y -$$', badges:['HH','AHORRO']},
 
   {id:3, name:'Plan de Tránsito', stage:1, unit:'Movimiento de tierra', leader:'Felipe Bertrand',
-   estado:'En funcionamiento modelo beta entregado', siguiente:'Presentar al cliente',
-   impactText:'Seguridad', badges:['SEGURIDAD'],
-   comments:'Incorporar a una persona de HSE que esté a cargo de este tema.'},
+   estado:'Desarrollo en funcionamiento', siguiente:'Obras comienza a utilizarlo',
+   impactText:'Seguridad', badges:['SEGURIDAD']},
 
   {id:5, name:'TLS-3D', stage:1, unit:'Calidad', leader:'Héctor Carreño',
    estado:'Levantamiento en planta Molibdeno Spence, detección de interferencias', siguiente:'Levantamiento en Repox',
@@ -154,49 +153,45 @@ var projects = [
    comments:'El costo de los camiones estaba por sobre el beneficio: el piloto fue exitoso, pero no cubría la inversión.'},
 
   {id:7, name:'MPM Green', stage:2, unit:'Rental', leader:'Gonzalo Middleton',
-   estado:'Aprobado el envío de grúa a proyecto Marco Spence', siguiente:'Recibir grúa en proyecto Marco Spence',
+   estado:'Aprobado el envío de grúa a proyecto Marco Spence', siguiente:'Enviar grúa a proyecto Marco Spence',
    impactText:'Nueva línea de negocio emergente', badges:['OTRO']},
 
   {id:8, name:'Scanner', stage:2, unit:'Movimiento de tierra', leader:'Rodrigo Araya',
-   estado:'Scanner instalado, en proceso de calibración con proveedor', siguiente:'Comienzo de utilizar información del scanner de manera autónoma para el control de camiones',
+   estado:'Instalación completada, falta integración plataforma Samtech', siguiente:'Scanner en funcionamiento, con la plataforma integrada',
    impactText:'HH / -$$', badges:['HH','AHORRO']},
 
   {id:9, name:'GTM', stage:3, unit:'Rental', leader:'Félix Vinagre',
-   estado:'Carga acelerada de documentación: documentos, mantenciones y actividades mecánicas mediante la ampliación del equipo', siguiente:'Luego de 2 meses la plataforma quedará 100% completa, preparada para traspasar a los proyectos',
+   estado:'Efectuándose carga acelerada de documentos, mediante el ingreso de dos nuevos practicantes.<br>Proyecto B4 utilizando al 100% la plataforma, con información al día.', siguiente:'A finales de septiembre quedará completa la plataforma para comenzar con el traspaso a los proyectos',
    impactText:'HH', badges:['HH']},
 
   {id:10, name:'Nupav', stage:2, unit:'RRHH', leader:'Gloria Bravo',
-   estado:'Carga de información del proceso de acreditación propio; proveedor configurando plataforma', siguiente:'Presentación de plataforma y comienzo de su uso para el proceso de acreditaciones',
+   estado:'Término de carga de información de nuestro proceso de acreditación. Proveedor en configuración de plataforma.', siguiente:'Presentación de plataforma y comienzo de su uso para el proceso de acreditaciones',
    impactText:'HH', badges:['HH']},
 
   {id:11, name:'Reloj Biométrico', stage:3, unit:'HSE', leader:'Juan Bolados',
-   estado:'Relojes totales en uso: 310.<br>Distribución: Spence (W&T 184 · Marco 36 · Ripio 20) · Escondida (B4 40 · Repox 30).<br>Proyecto B4 renueva sus 40 relojes y los cambia por relojes de nueva generación.',
-   siguiente:'Evaluación de modelo de compra ($160, relojes anteriores) o arriendo de relojes ($15, nuevos)',
+   estado:'Relojes totales: 310.<br>Distribución: Spence (W&T · Marco · Ripio) · Escondida (B4 · Repox).<br>Proyecto B4 renueva sus 40 relojes, migrando a la nueva generación.<br><br>Resultados:<br>• 100% adherencia, percepción positiva por parte de los operadores.<br>• Modelo predictivo que acierta en el crecimiento del riesgo.<br>• Alertas preventivas generadas, con la solicitud de descanso.<br>• 0 ejecuciones de botones de pánico, detecciones críticas y alertas cardíacas.',
+   siguiente:'Evaluar punto de detección operadores.<br>Trazar impacto general de la herramienta.',
    impactText:'Seguridad', badges:['SEGURIDAD']},
 
   {id:12, name:'Torre de Control', stage:4, unit:'Rental', leader:'Hugo Sepúlveda',
-   estado:'Evaluación de reportes mediante encuesta enviada', siguiente:'Equipo de HSE integra reportes y el uso de la torre de control',
+   estado:'Proceso de diagnóstico: reorganización de reportería, evaluando información necesaria, faltante e innecesaria.<br>Encuesta enviada, con poca respuesta (10%).', siguiente:'Coordinación con HSE por potencial sinergia.<br>Realizar levantamiento de usuarios.<br>Reenvío de encuesta más acotada y con menos encuestados.',
    impactText:'-$$ / PF', badges:['AHORRO','PF'], flag:'red'},
 
   {id:13, name:'Zyght', stage:3, unit:'HSE', leader:'Alexis Martel',
-   estado:'Operativo todos los módulos', siguiente:'Lograr reportería',
+   estado:'Generando reportería completa: actividades, hallazgos e incidentes', siguiente:'Lograr la detección de tendencias',
    impactText:'HH / Seguridad', badges:['HH','SEGURIDAD']},
 
-  {id:14, name:'DataScope', stage:3, unit:'Calidad', leader:'Héctor Carreño',
-   estado:'Implementación en proyecto Repox', siguiente:'Implementación en B. Ripio y Lomas Bayas',
-   impactText:'HH', badges:['HH']},
-
   {id:15, name:'Opusmesh', stage:0, unit:'C&M', leader:'Nicolás Viollier',
-   estado:'Armando caso piloto en proyecto Repox', siguiente:'Presentar para su aprobación',
+   estado:'Armando caso piloto en proyecto Repox', siguiente:'Planificar piloto<br>Desarrollo legal',
    impactText:'PF y Seguridad', badges:['PF','SEGURIDAD'], isNew:true},
 
   {id:16, name:'Control Herramientas', stage:1, unit:'C&M', leader:'Eric Segovia',
-   estado:'Ideando solución y búsqueda de proveedor', siguiente:'Armar caso piloto en proyecto',
+   estado:'Proveedor encontrado<br>Armado caso piloto', siguiente:'Pilotear en proyecto',
    impactText:'HH y -$$', badges:['HH','AHORRO'], isNew:true},
 
   {id:17, name:'Agente IA', stage:2, unit:'C&M', leader:'Nicolás Viollier',
    estado:'Dos agentes en funcionamiento: IA Procedimientos y Repox IA, testeándose con dos usuarios del equipo Repox', siguiente:'Seguimiento del uso del agente y evaluación de resultados',
-   impactText:'HH', badges:['HH'], isNew:true}
+   impactText:'HH y -$$', badges:['HH','AHORRO'], isNew:true}
 ];
 
 var labelsEl = document.getElementById('faLabels');
